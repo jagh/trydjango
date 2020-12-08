@@ -151,7 +151,7 @@ TEMPLATES = [
 
 
 --------------
-## Django Templates Engine Basics
+# Django Templates Engine Basics
 * In the templates like homepage.html, we can use the basics of django functions as the 'request':
 ```
 <h1> Homepage </h1>
@@ -239,3 +239,67 @@ def about_view(request, *args, **kargs):
 ```
 <h3> {{ title|capfirst|title }} </h3>
 ```
+
+
+--------------
+# Render Data from the database with a model
+* The base way to render data from a database is get the objects per clase and parser it by a dictionary in the views.py:
+```
+from django.shortcuts import render
+from .models import Product
+
+def product_detail_view(request):
+    obj = Product.objects.get(id=1)
+    context = {
+        'title': obj.title,
+        'description': obj.description
+    }
+    return render(request, "product/detail.html", context)
+```
+
+> Also it requires to add the link in the trydjango.urls.py and the correspond html file like detail.html, like:
+```
+{% extends 'base.html' %}
+{% block content %}
+    <h1> Product detail </h1>
+    <h3> {{ title|capfirst|title }} </h3>
+    <p>
+      {% if description != None and description != '' %}
+        {{ description }}
+      {% else %}
+        Description Coming Soon
+      {% endif %}
+    </p>
+{% endblock content %}
+```
+
+* The other way to parser the data object is assigning it to a context variable:
+```
+def product_detail_view(request):
+    obj = Product.objects.get(id=1)
+    context = {
+        'object': obj
+    }
+    return render(request, "product/detail.html", context)
+```
+> And the variables in the html template require call the object variable, like:
+```
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1> Product detail </h1>
+    <h3> {{ object.title|capfirst|title }} </h3>
+    <p>
+      {% if object.description != None and object.description != '' %}
+        {{ object.description }}
+      {% else %}
+        Description Coming Soon
+      {% endif %}
+    </p>
+{% endblock content %}
+```
+
+--------------
+# Render Data from the database with a model and Template
+<!-- Python Django Web Framework - Full Course for Beginners -->
+<!-- time 2:00:47 -->
