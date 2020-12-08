@@ -1,12 +1,6 @@
 # trydjango
 Basic steps for developing Python Django applications
 
-## Python virtual environment and place folder
-```
-source fondocrc/bin/activate
-mkdir trydjango/src/
-cd trydjango/src/
-```
 
 --------------
 ## Basic steps to initialize Django
@@ -163,4 +157,85 @@ TEMPLATES = [
 <h1> Homepage </h1>
 {{ request.user.is_authenticated }}
 <p> This is the template </p>
+```
+
+* Also we create a base.htmml as a html framework for all the views:
+```
+<html>
+<body>
+  {% block content %}
+  replace me
+  {% endblock %}
+</body>
+</html>
+```
+> Also in the view html we need to reference the 'block <name>'
+```
+{% extends 'base.html' %}
+{% block content %}
+    <h1> Homepage </h1>
+    {{ request.user.is_authenticated }}
+    <p> This is the template </p>
+{% endblock %}
+```
+
+## Include Template Tag
+* Django enables to use inlude modules of html code, for example we add navbar.html code in the base.html:
+```
+<html>
+<body>
+  {% include 'navbar.html' %}
+</html>
+</body>
+```
+
+## Rendering Context in a Template
+* django redering data as int, list and dicts from each view function like def about_view() in views.py:
+```
+def about_view(request, *args, **kargs):
+    my_context = {
+        "my_text": "This is a general text in views",
+        "my_number": 123,
+        "my_lists": [123,456,678]
+    }
+    return render(request, "about.html", my_context)
+```
+
+* And it can be called directly from their correspond html page, like:
+```
+<p>
+{{ my_text }}, {{ my_number }}, {{my_lists}}
+</p>
+```
+
+## For loops in a Templates
+* Once we send a list from a view funtion, we could deploy a list, like:
+```
+<ul>
+  <p> My list: </p>
+{% for my_sub_item in my_lists %}
+  <li> {{forloop.counter}} - {{ my_sub_item }} </li>
+{% endfor %}
+</ul>
+```
+
+## Using conditionals in Templates
+```
+<ul>
+  <p> My list: </p>
+{% for abc in my_lists %}
+  {% if abc == 123 %}
+    <li> {{forloop.counter}} - {{ abc|add:22 }} </li>
+  {% elif abc == "Abc" %}
+    <li> This is not the network </li>
+  {% else %}
+    <li> {{forloop.counter}} - {{ abc}} </li>
+  {% endif %}
+{% endfor %}
+</ul>
+```
+
+## Filters in Templates
+```
+<h3> {{ title|capfirst|title }} </h3>
 ```
